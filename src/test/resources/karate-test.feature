@@ -1,3 +1,4 @@
+@REQ_MARVEL-001 @characterApiV1
 Feature: Test de API súper simple
 
   Background:
@@ -8,25 +9,17 @@ Feature: Test de API súper simple
     * header Content-Type = 'application/json'
 
 
-  @read
-  Scenario: Obtener todos los personajes y validar la estructura
+  @id:1 @getAll @casoPositivo
+  Scenario: T-MARVEL-001-CA1 - Obtener todos los personajes y validar la estructura
     Given path apiUser, 'api', 'characters'
     When method get
     Then status 200
-    * match each response ==
-      """
-      {
-        "id": '#number',
-        "name": '#string',
-        "alterego": '#string',
-        "description": '#string',
-        "powers": '#array'
-      }
-      """
+    * match each response == { "id": '#number', "name": '#string', "alterego": '#string', "description": '#string', "powers": '#array' }
 
 
-  @crud_flow_single_scenario
-  Scenario: Flujo CRUD completo de un personaje
+
+  @id:2 @crudFlow @casoPositivo
+  Scenario: T-MARVEL-001-CA2 - Flujo CRUD completo de un personaje
 
     * print '--- Paso 1: Creando un personaje ---'
     * def uniqueName = 'Phoenix-' + java.util.UUID.randomUUID()
@@ -65,8 +58,8 @@ Feature: Test de API súper simple
     * status 404
     * match response.error == "Character not found"
 
-  @negative @create
-  Scenario: Intentar crear un personaje con campos requeridos vacíos
+  @id:3 @create @casoNegativo
+  Scenario: T-MARVEL-001-CA3 - Intentar crear un personaje con campos requeridos vacíos
     * print "--- Test Negativo: POST con campos vacíos ---"
     Given path apiUser, 'api', 'characters'
     And request { "name": "", "alterego": "", "description": "", "powers": [] }
@@ -74,8 +67,8 @@ Feature: Test de API súper simple
     Then status 400
     * match response == { "name": "Name is required", "alterego": "Alterego is required", "description": "Description is required", "powers": "Powers are required" }
 
-  @negative @create
-  Scenario: Intentar crear un personaje con un nombre que ya existe
+  @id:4 @create @casoNegativo @duplicado
+  Scenario: T-MARVEL-001-CA4 - Intentar crear un personaje con un nombre que ya existe
     * print "--- Test Negativo: POST con nombre duplicado ---"
 
     * print "Setup: Asegurando que 'Iron Man' con ID 1 existe..."
@@ -91,16 +84,16 @@ Feature: Test de API súper simple
     Then status 400
     * match respo6333nse.error == "Character name already exists"
 
-  @negative @read
-  Scenario: Intentar obtener un personaje por ID que no existe
+  @id:5 @read @casoNegativo
+  Scenario: T-MARVEL-001-CA5 -Intentar obtener un personaje por ID que no existe
     * print "--- Test Negativo: GET con ID inexistente ---"
     Given path apiUser, 'api', 'characters', 999999
     When method get
     Then status 404
     * match response.error == "Character not found"
 
-  @negative @update
-  Scenario: Intentar actualizar un personaje que no existe
+  @id:6 @update @casoNegativo
+  Scenario: T-MARVEL-001-CA6 - Intentar actualizar un personaje que no existe
     * print "--- Test Negativo: PUT con ID inexistente ---"
 
     Given path apiUser, 'api', 'characters', 999999
@@ -111,8 +104,8 @@ Feature: Test de API súper simple
 
     * match response.error == "Character not found"
 
-  @negative @delete
-  Scenario: Intentar eliminar un personaje que no existe
+  @id:7 @delete @casoNegativo
+  Scenario: T-MARVEL-001-CA7 -Intentar eliminar un personaje que no existe
     * print "--- Test Negativo: DELETE con ID inexistente ---"
     Given path apiUser, 'api', 'characters', 999999
     When method delete
