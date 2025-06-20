@@ -82,7 +82,7 @@ Feature: Test de API súper simple
     And request { "name": "Iron Man", "alterego": "Otro Stark", "description": "Intento de duplicado", "powers": [Invisibility] }
     When method post
     Then status 400
-    * match respo6333nse.error == "Character name already exists"
+    * match response.error == "Character name already exists"
 
   @id:5 @read @casoNegativo
   Scenario: T-MARVEL-001-CA5 -Intentar obtener un personaje por ID que no existe
